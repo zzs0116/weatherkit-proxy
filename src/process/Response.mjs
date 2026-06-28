@@ -250,8 +250,9 @@ async function InjectCurrentWeather(currentWeather, Settings, enviroments, preFe
  */
 async function InjectForecastDaily(forecastDaily, Settings, enviroments, preFetchedData) {
     Console.info("☑️ InjectForecastDaily");
-    if (!Settings?.Weather?.Replace?.includes(enviroments.country)) {
-        Console.warn("InjectForecastDaily", `Unreplaced country: ${enviroments.country}`);
+    const replaceDaily = Settings?.Weather?.ReplaceDaily ?? true;
+    if (!replaceDaily || !Settings?.Weather?.Replace?.includes(enviroments.country)) {
+        Console.warn("InjectForecastDaily", `Unreplaced or skipped country: ${enviroments.country}`);
         Console.info("✅ InjectForecastDaily");
         return forecastDaily;
     }
@@ -293,8 +294,9 @@ async function InjectForecastDaily(forecastDaily, Settings, enviroments, preFetc
  */
 async function InjectForecastHourly(forecastHourly, Settings, enviroments, preFetchedData) {
     Console.info("☑️ InjectForecastHourly");
-    if (!Settings?.Weather?.Replace?.includes(enviroments.country)) {
-        Console.warn("InjectForecastHourly", `Unreplaced country: ${enviroments.country}`);
+    const replaceHourly = Settings?.Weather?.ReplaceHourly ?? true;
+    if (!replaceHourly || !Settings?.Weather?.Replace?.includes(enviroments.country)) {
+        Console.warn("InjectForecastHourly", `Unreplaced or skipped country: ${enviroments.country}`);
         Console.info("✅ InjectForecastHourly");
         return forecastHourly;
     }

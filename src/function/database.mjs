@@ -2,7 +2,7 @@ export default {
     WeatherKit: {
         Settings: {
             DataSets: ["airQuality", "currentWeather", "forecastDaily", "forecastHourly", "forecastNextHour", "locationInfo", "news", "historicalComparisons", "weatherAlerts", "weatherChanges"],
-            Weather: { Replace: ["CN"], Provider: "ColorfulClouds" },
+            Weather: { Replace: ["CN"], ReplaceDaily: false, ReplaceHourly: false, Provider: "ColorfulClouds" },
             NextHour: { Provider: "ColorfulClouds" },
             AirQuality: {
                 Current: { Pollutants: { Provider: "ColorfulClouds", Units: { Replace: [], Mode: "Scale" } }, Index: { Replace: ["HJ6332012"], Provider: "ColorfulCloudsCN", ForceCNPrimaryPollutants: false } },
