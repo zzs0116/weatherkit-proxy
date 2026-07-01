@@ -837,31 +837,31 @@ export function renderIndex(host, protocol) {
             {
                 name: "Shadowrocket",
                 icon: "https://fastly.jsdelivr.net/gh/NSRingo/engineering-solutions@main/packages/doc-ui/src/module-install/icons/shadowrocket.png",
-                filename: "config.srmodule",
+                filename: "weatherkit-proxy.srmodule",
                 scheme: "shadowrocket://install?module="
             },
             {
                 name: "Surge",
                 icon: "https://fastly.jsdelivr.net/gh/NSRingo/engineering-solutions@main/packages/doc-ui/src/module-install/icons/surge.png",
-                filename: "config.sgmodule",
+                filename: "weatherkit-proxy.sgmodule",
                 scheme: "surge:///install-module?url="
             },
             {
                 name: "Loon",
                 icon: "https://fastly.jsdelivr.net/gh/NSRingo/engineering-solutions@main/packages/doc-ui/src/module-install/icons/loon.png",
-                filename: "config.plugin",
+                filename: "weatherkit-proxy.plugin",
                 scheme: "loon://import?plugin="
             },
             {
                 name: "Stash",
                 icon: "https://fastly.jsdelivr.net/gh/NSRingo/engineering-solutions@main/packages/doc-ui/src/module-install/icons/stash.png",
-                filename: "config.stoverride",
+                filename: "weatherkit-proxy.stoverride",
                 scheme: "stash://install-override?url="
             },
             {
                 name: "Egern",
                 icon: "https://fastly.jsdelivr.net/gh/NSRingo/engineering-solutions@main/packages/doc-ui/src/module-install/icons/egern.png",
-                filename: "config.yaml",
+                filename: "weatherkit-proxy.yaml",
                 scheme: "egern:///modules/new?url="
             }
         ];
