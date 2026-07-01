@@ -577,7 +577,7 @@ export function renderIndex(host, protocol) {
                 <!-- 一键备份 -->
                 <button class="btn-backup" id="copyBackupBtn">
                     <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-                    <span>备份/分享此配置页链接</span>
+                    <span>分享此配置并推荐本项目</span>
                 </button>
 
                 <!-- 自定义配置切换 -->
@@ -830,9 +830,24 @@ export function renderIndex(host, protocol) {
         <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
         <span id="toastMsg">操作成功</span>
     </div>
-
     <script>
         const baseUrl = "${baseUrl}";
+
+        let toastTimeout = null;
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            const toastMsg = document.getElementById("toastMsg");
+            if (!toast || !toastMsg) return;
+            toastMsg.textContent = message;
+            toast.classList.add("show");
+            if (toastTimeout) {
+                clearTimeout(toastTimeout);
+            }
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove("show");
+            }, 2000);
+        }
+
         const rawItems = [
             {
                 name: "Shadowrocket",
@@ -1247,14 +1262,16 @@ export function renderIndex(host, protocol) {
         // 备份配置链接点击
         copyBackupBtn.addEventListener("click", () => {
             const base64 = getBase64Config();
-            if (!base64) {
-                showToast("当前未做任何修改，无需备份。");
-                return;
-            }
-            const backupUrl = window.location.origin + window.location.pathname + "?config=" + base64;
-            navigator.clipboard.writeText(backupUrl).then(() => {
-                showToast("配置备份页链接已复制到剪贴板！");
-            }).catch(() => {
+            const shareUrl = base64 
+                ? window.location.origin + window.location.pathname + "?config=" + base64
+                : window.location.origin + window.location.pathname;
+            
+            const shareText = "🚀 推荐一个超棒的开源项目：WeatherKit-Proxy，一键为 Apple WeatherKit 提供国内天气与空气质量数据源支持！\\n- ⚡ 零客户端脚本代理，支持一键拉起配置导入。\\n- ⚙️ 支持 Cloudflare Workers / Vercel 免费独立部署。\\n- 🎨 内置可视化配置中心，支持彩云/和风天气数据源混合搭配。\\n👉 不想部署？直接使用我的配置页（支持一键导入）：" + shareUrl + "\\n👉 想要自行部署？项目 GitHub 地址：https://github.com/meme-lau/weatherkit-proxy";
+
+            navigator.clipboard.writeText(shareText).then(() => {
+                showToast("推荐文案与配置链接已复制到剪贴板！");
+            }).catch((err) => {
+                console.error("复制失败: ", err);
                 showToast("复制失败，请手动复制 URL");
             });
         });
