@@ -559,7 +559,7 @@ export function renderIndex(host, protocol) {
             <img class="logo" src="https://developer.apple.com/assets/elements/icons/weatherkit/weatherkit-128x128.png" alt="WeatherKit Logo">
             <div class="header-text">
                 <h1>
-                    <span class="title-brand">meme's<br>WeatherKit-Proxy</span>
+                    <span class="title-brand">3dis0n's<br>WeatherKit-Proxy</span>
                     <span class="title-main">配置中心</span>
                 </h1>
             </div>
@@ -816,9 +816,9 @@ export function renderIndex(host, protocol) {
 
         <footer>
             <p>
-               By MemeStudio
+               By 3dis0n
                 •
-                <a href="https://github.com/meme-lau/weatherkit-proxy" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a href="https://github.com/zzs0116/weatherkit-proxy" target="_blank" rel="noopener noreferrer">GitHub</a>
                 •
                 基于 <a href="https://nsringo.github.io/guide/Weather/weather-kit" target="_blank" rel="noopener noreferrer">iRingo</a> 优化重构
             </p>
