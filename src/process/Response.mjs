@@ -5,9 +5,10 @@ import ColorfulClouds from "../class/ColorfulClouds.mjs";
 import QWeather from "../class/QWeather.mjs";
 import Weather from "../class/Weather.mjs";
 import WeatherKit2 from "../class/WeatherKit2.mjs";
+import buildSettings from "../function/buildSettings.mjs";
 import database from "../function/database.mjs";
 import parseWeatherKitURL from "../function/parseWeatherKitURL.mjs";
-import buildSettings from "../function/buildSettings.mjs";
+import patchWeatherFlatBuffer from "../function/patchWeatherFlatBuffer.mjs";
 import { Console } from "../utils/index.mjs";
 /***************** Processing *****************/
 export async function Response($request, $response, context = {}) {
@@ -115,13 +116,18 @@ export async function Response($request, $response, context = {}) {
 
                     // 解析FlatBuffer
                     const ByteBuffer = new flatbuffers.ByteBuffer(rawBody);
-                    const Builder = new flatbuffers.Builder();
                     // 主机判断
                     switch (url.hostname) {
                         case "weatherkit.apple.com":
                             // 路径判断
                             if (url.pathname.startsWith("/api/v2/weather/")) {
                                 body = WeatherKit2.decode(ByteBuffer, "all");
+                                const changedSections = new Set();
+                                const updateSection = async (section, inject) => {
+                                    const before = JSON.stringify(body?.[section]);
+                                    body[section] = await inject(body?.[section]);
+                                    if (JSON.stringify(body?.[section]) !== before) changedSections.add(section);
+                                };
                                 // // 打印 Apple 原始 airQuality 数据
                                 // if (body?.airQuality) {
                                 //     Console.log(`[Apple 原始 airQuality]`, JSON.stringify(body.airQuality, null, 2));
@@ -140,23 +146,23 @@ export async function Response($request, $response, context = {}) {
                                     parameters.dataSets.map(async dataSet => {
                                         switch (dataSet) {
                                             case "airQuality": {
-                                                body.airQuality = await InjectAirQuality(body.airQuality, Settings, enviroments, preFetched);
+                                                await updateSection("airQuality", value => InjectAirQuality(value, Settings, enviroments, preFetched));
                                                 break;
                                             }
                                             case "currentWeather": {
-                                                body.currentWeather = await InjectCurrentWeather(body.currentWeather, Settings, enviroments, preFetched.currentWeather);
+                                                await updateSection("currentWeather", value => InjectCurrentWeather(value, Settings, enviroments, preFetched.currentWeather));
                                                 break;
                                             }
                                             case "forecastDaily": {
-                                                body.forecastDaily = await InjectForecastDaily(body.forecastDaily, Settings, enviroments, preFetched.forecastDaily);
+                                                await updateSection("forecastDaily", value => InjectForecastDaily(value, Settings, enviroments, preFetched.forecastDaily));
                                                 break;
                                             }
                                             case "forecastHourly": {
-                                                body.forecastHourly = await InjectForecastHourly(body.forecastHourly, Settings, enviroments, preFetched.forecastHourly);
+                                                await updateSection("forecastHourly", value => InjectForecastHourly(value, Settings, enviroments, preFetched.forecastHourly));
                                                 break;
                                             }
                                             case "forecastNextHour": {
-                                                body.forecastNextHour = await InjectForecastNextHour(body.forecastNextHour, Settings, enviroments, preFetched.forecastNextHour);
+                                                await updateSection("forecastNextHour", value => InjectForecastNextHour(value, Settings, enviroments, preFetched.forecastNextHour));
                                                 break;
                                             }
                                             default:
@@ -165,19 +171,24 @@ export async function Response($request, $response, context = {}) {
                                     }),
                                 );
 
-                                // 去掉所有 providerLogo
-                                allSections.forEach(s => {
-                                    if (body?.[s]?.metadata?.providerLogo) {
-                                        body[s].metadata.providerLogo = undefined;
-                                    }
-                                });
-                                const WeatherData = WeatherKit2.encode(Builder, "all", body);
-                                Builder.finish(WeatherData);
+                                // 只改写已变更的数据集，避免因旧 Schema 重编码而丢失新版字段。
+                                allSections
+                                    .filter(s => changedSections.has(s))
+                                    .forEach(s => {
+                                        if (body?.[s]?.metadata?.providerLogo) {
+                                            body[s].metadata.providerLogo = undefined;
+                                        }
+                                    });
+                                try {
+                                    rawBody = patchWeatherFlatBuffer(rawBody, body, changedSections);
+                                } catch (error) {
+                                    // Schema 再次变化时安全透传 Apple 原始数据，不返回被裁剪或损坏的天气响应。
+                                    Console.error("patchWeatherFlatBuffer", error?.message ?? error);
+                                }
                                 break;
                             }
                             break;
                     }
-                    rawBody = Builder.asUint8Array(); // Of type `Uint8Array`.
                     break;
                 }
                 case "application/protobuf":
@@ -606,8 +617,7 @@ async function InjectComparison(airQuality, currentIndexProvider, Settings, envi
     };
     const qweatherComparison = async (currentCategoryIndex, pollutantsToAirQuality) => {
         Console.debug("☑️ qweatherComparison", `currentCategoryIndex: ${currentCategoryIndex}`);
-        const locationsGrid = preFetched?.locationsGrid
-            ?? await QWeather.GetLocationsGrid(undefined, () => {});
+        const locationsGrid = preFetched?.locationsGrid ?? (await QWeather.GetLocationsGrid(undefined, () => {}));
         const { latitude, longitude } = enviroments.qWeather;
         const locationInfo = QWeather.GetLocationInfo(locationsGrid, latitude, longitude);
 
