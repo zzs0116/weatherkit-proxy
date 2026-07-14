@@ -821,7 +821,7 @@ export function renderIndex(host, protocol) {
                 <a href="https://github.com/zzs0116/weatherkit-proxy" target="_blank" rel="noopener noreferrer">GitHub</a>
                 •
                 基于 <a href="https://nsringo.github.io/guide/Weather/weather-kit" target="_blank" rel="noopener noreferrer">iRingo</a>
-                和<a href="https://github.com/meme-lau/weatherkit-proxy" target="_blank" rel="noopener noreferrer">meme-lau's weatherkit-proxy</a> 优化重构
+                和 <a href="https://github.com/meme-lau/weatherkit-proxy" target="_blank" rel="noopener noreferrer">meme-lau's weatherkit-proxy</a> 优化重构
             </p>
         </footer>
     </div>
