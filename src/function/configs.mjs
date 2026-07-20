@@ -24,7 +24,7 @@ AND,((IP-CIDR,63.92.224.0/19,no-resolve),(PROTOCOL,UDP),(DEST-PORT,443)),REJECT-
 AND,((IP-CIDR,65.199.22.0/23,no-resolve),(PROTOCOL,UDP),(DEST-PORT,443)),REJECT-NO-DROP
 AND,((OR,((IP-ASN,714,no-resolve),(IP-ASN,6185,no-resolve))),(PROTOCOL,QUIC)),REJECT-DROP
 DOMAIN-SUFFIX,weatherkit.apple.com,DIRECT
-DOMAIN-SUFFIX,__DOMAIN__,Kuromis
+DOMAIN-SUFFIX,__DOMAIN__,Proxies
 DOMAIN,weather-analytics-events.apple.com,REJECT-DROP
 DOMAIN-SUFFIX,tthr.apple.com,REJECT-DROP
 DOMAIN,tether.edge.apple,REJECT-DROP
